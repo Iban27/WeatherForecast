@@ -13,9 +13,9 @@ namespace Assets.Scripts
     {
         private readonly List<ForecastElement> _forecastElements = new List<ForecastElement>();
         public IReadOnlyList<ForecastElement> ForecastElements => _forecastElements;
-        public void AddForecastElement(DateTime time, float temperature)
+        public void AddForecastElement(DateTime time, float temperature, Condition condition)
         {
-            ForecastElement forecastElement = new ForecastElement(time, temperature);
+            ForecastElement forecastElement = new ForecastElement(time, temperature, condition);
             _forecastElements.Add(forecastElement);
         }
 
@@ -39,10 +39,12 @@ namespace Assets.Scripts
     {
         public readonly DateTime time;
         public readonly float temperature;
-        public ForecastElement(DateTime time, float temperature)
+        public readonly Condition condition;
+        public ForecastElement(DateTime time, float temperature, Condition condition)
         {
             this.time = time;
             this.temperature = temperature;
+            this.condition = condition;
         }
     }
 }

@@ -22,16 +22,17 @@ namespace WindowManagerSystem
         private ForecastList _forecastList;
         private DateTime _currentDateTime;
 
-        public void Initialize(ForecastData forecastData)
+        public void Initialize(NewForecastData forecastData)
         {
             CreateForecastList(forecastData);
             _additionalInformationPresenter = new AdditionalInformationPresenter(_forecastList, _additionalInformationText);
             LoadDays();
         }
 
-        private void CreateForecastList(ForecastData forecastData)
+        private void CreateForecastList(NewForecastData forecastData)
         {
             _forecastList = new ForecastList();
+            /*
             for (int i = 0; i < forecastData.hourly.time.Length; i++)
             {
                 if (DateTime.TryParse(forecastData.hourly.time[i], out DateTime result))
@@ -39,6 +40,20 @@ namespace WindowManagerSystem
                     _forecastList.AddForecastElement(result, forecastData.hourly.temperature_2m[i]);
                 }
             }
+            */
+            Debug.Log(forecastData.forecast.forecastday[0].hour.Length);
+            for (int j = 0; j < forecastData.forecast.forecastday.Length; j++)
+            {
+                for (int i = 0; i < forecastData.forecast.forecastday[j].hour.Length; i++)
+                {
+                    if (DateTime.TryParse(forecastData.forecast.forecastday[j].hour[i].time, out DateTime result))
+                    {
+                        _forecastList.AddForecastElement(result, forecastData.forecast.forecastday[j].hour[i].temp_c, forecastData.forecast.forecastday[j].day.condition);
+
+                    }
+                }
+            }
+            
         }
 
         private void LoadDays()
@@ -48,7 +63,7 @@ namespace WindowManagerSystem
                 if (day.time.Hour == 0)
                 {
                     DayWeatherElement dayWeatherElement = Instantiate(_dayWeatherElementPrefab, _dayWeatherElementContainer);
-                    dayWeatherElement.Initialize(day.time);
+                    dayWeatherElement.Initialize(day);
                     dayWeatherElement.onButtonClicked += UpdateCurrentDate;
                 }
             }

@@ -33,20 +33,10 @@ namespace WindowManagerSystem
         private int _loadedCityCount = 0;
         private int _cityCount = 0;
 
-        private void LoadCitys()
-        {
-            foreach (var city in _cityData)
-            {
-                CityElement cityElement = Instantiate(_cityElementPrefab, _cityElementContainer);
-                
-                cityElement.onButtonClicked += OpenWeatherWindow;
-            }
-        }
-
         private void NewLoadCities(List<NewCityData> newCityData)
         {
             _cityCount = newCityData.Count;
-            
+
             foreach (var city in newCityData)
             {
                 CityElement cityElement = Instantiate(_cityElementPrefab, _cityElementContainer);
@@ -54,16 +44,16 @@ namespace WindowManagerSystem
                 cityElement.onButtonClicked += OpenWeatherWindow;
                 cityElement.onImageLoaded += ChangeProgressSlider;
                 cityElement.onImageLoaded += UpdateLoadingPanel;
-                
+
             }
-            
+
         }
 
         private void UpdateLoadingPanel()
         {
-            
+
             double percentage = (double)_loadedCityCount / (double)_cityCount * 100f;
-            
+
             _progressText.text = percentage.ToString("f2") + "%";
             _progressSlider.value = (float)percentage / 100f;
             if (percentage >= 100)
@@ -75,25 +65,26 @@ namespace WindowManagerSystem
         private void ChangeProgressSlider()
         {
             _loadedCityCount++;
-            
+
         }
 
         public async void Start()
         {
             _newCityData = await _citiesLoader.Initialization();
-            
+
             NewLoadCities(_newCityData);
         }
 
-        private void OpenWeatherWindow()
+        private void OpenWeatherWindow(float latitude, float longitude)
         {
-            LoadWeather();
+            LoadWeather(latitude, longitude);
         }
 
-        private async void LoadWeather()
+        private async void LoadWeather(float latitude, float longitude)
         {
             WindowManager.Instance.Open<LoadingWindow>();
-            var forecastData = await _forecastLoader.Initialization();
+            var forecastData = await _forecastLoader.Initialization(latitude, longitude);
+            Debug.Log("forecast data loaded");
             WeatherWindow weatherWindow = WindowManager.Instance.Open<WeatherWindow>() as WeatherWindow;
             weatherWindow.Initialize(forecastData);
             WindowManager.Instance.Close<LoadingWindow>();

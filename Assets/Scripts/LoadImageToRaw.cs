@@ -12,15 +12,20 @@ public class LoadImageToRaw : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _progressText;
     public event Action onImageLoaded;
 
-    public void Initialize(string id)
+    public void Initialize(string url)
+    {
+        Debug.Log(url);
+        StartCoroutine(DownloadingImage(url));
+    }
+
+    public void InitializeIcon(string id)
     {
         string _imageUrl = $"https://img.icons8.com/?size=100&id={id}&format=png&color=000000";
         StartCoroutine(DownloadingImage(_imageUrl));
     }
 
-    private IEnumerator DownloadingImage(string url1)
+    private IEnumerator DownloadingImage(string url)
     {
-        string url = "https://i.pinimg.com/originals/4b/22/96/4b22966db450e1a77d19fc7ab07cf930.jpg";
         using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
         {
             request.SendWebRequest();
