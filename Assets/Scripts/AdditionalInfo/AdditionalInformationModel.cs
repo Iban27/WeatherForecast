@@ -42,6 +42,4 @@ public class AdditionalInformationModel
         private set;
         get;
     }
-
-    
 }

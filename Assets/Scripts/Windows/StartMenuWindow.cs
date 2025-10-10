@@ -25,7 +25,6 @@ namespace WindowManagerSystem
         private CitiesLoader _citiesLoader = new CitiesLoader();
         private List<NewCityData> _newCityData;
         [SerializeField] private TMP_InputField _inputField;
-        private List<NewCityData> _searchedCityElements = new List<NewCityData>();
         [SerializeField] private TextMeshProUGUI _noCitiesText;
         [SerializeField] private GameObject _loadingPanel;
         [SerializeField] private TextMeshProUGUI _progressText;
@@ -36,26 +35,23 @@ namespace WindowManagerSystem
         private void NewLoadCities(List<NewCityData> newCityData)
         {
             _cityCount = newCityData.Count;
-
+            
             foreach (var city in newCityData)
             {
                 CityElement cityElement = Instantiate(_cityElementPrefab, _cityElementContainer);
-                cityElement.Initizalize(city);
                 cityElement.onButtonClicked += OpenWeatherWindow;
                 cityElement.onImageLoaded += ChangeProgressSlider;
                 cityElement.onImageLoaded += UpdateLoadingPanel;
-
+                cityElement.Initizalize(city);
             }
-
         }
 
         private void UpdateLoadingPanel()
         {
-
-            double percentage = (double)_loadedCityCount / (double)_cityCount * 100f;
-
+            var percentage = (double)_loadedCityCount / (double)_cityCount * 100f;
             _progressText.text = percentage.ToString("f2") + "%";
             _progressSlider.value = (float)percentage / 100f;
+            //Debug.Log(percentage);
             if (percentage >= 100)
             {
                 _loadingPanel.SetActive(false);
@@ -65,13 +61,11 @@ namespace WindowManagerSystem
         private void ChangeProgressSlider()
         {
             _loadedCityCount++;
-
         }
 
         public async void Start()
         {
             _newCityData = await _citiesLoader.Initialization();
-
             NewLoadCities(_newCityData);
         }
 
@@ -83,29 +77,20 @@ namespace WindowManagerSystem
         private async void LoadWeather(float latitude, float longitude)
         {
             WindowManager.Instance.Open<LoadingWindow>();
+            WindowManager.Instance.Close<StartMenuWindow>();
             var forecastData = await _forecastLoader.Initialization(latitude, longitude);
-            Debug.Log("forecast data loaded");
             WeatherWindow weatherWindow = WindowManager.Instance.Open<WeatherWindow>() as WeatherWindow;
             weatherWindow.Initialize(forecastData);
             WindowManager.Instance.Close<LoadingWindow>();
         }
 
-        public void SearchCityElements()
-        {
-            List<NewCityData> cityElements = _newCityData;
-            List<NewCityData> searchedCityElements = new List<NewCityData>();
-
-            DestroyCityElements();
-            NewLoadCities(_searchedCityElements);
-        }
-
         public Dictionary<NewCityData, int> GetDictionaryPriority(List<NewCityData> cities)
         {
-            string inputText = Regex.Replace(_inputField.text, @"[^a-z0-9à-ÿ¸\s]", string.Empty, RegexOptions.IgnoreCase).ToLower();
+            string inputText = Regex.Replace(_inputField.text, @"[^a-z0-9?-??\s]", string.Empty, RegexOptions.IgnoreCase).ToLower();
             Dictionary<NewCityData, int> citiesPriority = new Dictionary<NewCityData, int>();
             for (int i = 0; i < cities.Count; i++)
             {
-                string cityText = Regex.Replace(cities[i].city, @"[^a-z0-9à-ÿ¸\s]", string.Empty, RegexOptions.IgnoreCase).ToLower();
+                string cityText = Regex.Replace(cities[i].city, @"[^a-z0-9?-??\s]", string.Empty, RegexOptions.IgnoreCase).ToLower();
                 int priority = LevenshteinDistance(inputText, cityText);
                 citiesPriority.Add(cities[i], priority);
             }
@@ -122,6 +107,7 @@ namespace WindowManagerSystem
                 ChangeNoCitiesText(0);
                 return;
             }
+            
             List<NewCityData> searchedCityElements = new List<NewCityData>();
             var priority = GetDictionaryPriority(_newCityData);
             
@@ -130,16 +116,12 @@ namespace WindowManagerSystem
                 int i = 0;
                 if (i < 10)
                 {
-                    
-                    
                     if (city.Value < 4)
                     {
                         searchedCityElements.Add(city.Key);
                         i++;
                     }
-                    
                 }
-                
             }
             
             ChangeNoCitiesText(searchedCityElements.Count);
@@ -158,8 +140,6 @@ namespace WindowManagerSystem
             {
                 _noCitiesText.gameObject.SetActive(false);
             }
-            
-            
         }
 
         public void DestroyCityElements()
@@ -193,12 +173,6 @@ namespace WindowManagerSystem
                 }
             }
             return d[n, m];
-        }
-
-        public float GetPercentageByCity(int cityCount)
-        {
-            float percentage = 100 / cityCount;
-            return percentage;
         }
     }
 }

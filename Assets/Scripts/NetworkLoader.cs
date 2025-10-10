@@ -17,7 +17,7 @@ public class NetworkLoader
         }
         catch (HttpRequestException e)
         {
-            Console.WriteLine("Ошибка подключения!", true, true);
+            Console.WriteLine("?????? ???????????!", true, true);
             Console.WriteLine($"Message : {e.Message}");
             return null;
         }

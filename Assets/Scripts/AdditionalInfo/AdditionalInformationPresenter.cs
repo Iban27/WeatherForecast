@@ -35,18 +35,19 @@ public class AdditionalInformationPresenter
         {
             return;
         }
+        
         string additionalInfo = "";
-        additionalInfo = $"Средняя температура: {_additionalInformationModel.AverageTemperature}\n";
-        additionalInfo += $"Максимальная / Минимальная температура: {_additionalInformationModel.MaxTemperature}/{_additionalInformationModel.MinTemperature}\n";
-        additionalInfo += $"Количество дней с Положительной / Отрицательной температурой: {_additionalInformationModel.PositiveTemperatureCount}/{_additionalInformationModel.NegativeTemperatureCount}";
+        additionalInfo = $"??????? ???????????: {_additionalInformationModel.AverageTemperature}\n";
+        additionalInfo += $"???????????? / ??????????? ???????????: {_additionalInformationModel.MaxTemperature}/{_additionalInformationModel.MinTemperature}\n";
+        additionalInfo += $"?????????? ???? ? ????????????? / ????????????? ????????????: {_additionalInformationModel.PositiveTemperatureCount}/{_additionalInformationModel.NegativeTemperatureCount}";
         _additionalInformationView.UpdateAdditionalInfoText(additionalInfo);
     }
 
     private float GetAverageTemperature(ForecastElement[] forecastElements)
     {
-
         float averageTemperature = 0;
         float tempCount = 0.0f;
+        
         foreach (var forecastElement in forecastElements)
         {
 
@@ -55,12 +56,12 @@ public class AdditionalInformationPresenter
 
 
         }
+        
         return averageTemperature / tempCount;
     }
 
     private (float, float) GetMaxMinTemperature(ForecastElement[] forecastElements)
     {
-
         float maxTemp = float.MinValue;
         float minTemp = float.MaxValue;
 
@@ -75,6 +76,7 @@ public class AdditionalInformationPresenter
                 minTemp = forecastElement.temperature;
             }
         }
+        
         var minMaxTemp = (minTemp, maxTemp);
         return minMaxTemp;
     }
@@ -84,8 +86,7 @@ public class AdditionalInformationPresenter
     {
         int positiveTemperatureCount = 0;
         int negativeTemperatureCount = 0;
-
-
+        
         foreach (var forecastElement in forecastElements)
         {
             if (forecastElement.temperature > 0)

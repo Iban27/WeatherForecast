@@ -13,9 +13,9 @@ namespace Assets.Scripts
     {
         private readonly List<ForecastElement> _forecastElements = new List<ForecastElement>();
         public IReadOnlyList<ForecastElement> ForecastElements => _forecastElements;
-        public void AddForecastElement(DateTime time, float temperature, Condition condition)
+        public void AddForecastElement(DateTime time, float temperature, Condition condition, Hour[] hours)
         {
-            ForecastElement forecastElement = new ForecastElement(time, temperature, condition);
+            ForecastElement forecastElement = new ForecastElement(time, temperature, condition, hours);
             _forecastElements.Add(forecastElement);
         }
 
@@ -24,11 +24,9 @@ namespace Assets.Scripts
             List<ForecastElement> forecastElements = new List<ForecastElement>();
             foreach (var element in _forecastElements)
             {
-                
                 if (element.time.Day==day.Day)
                 {
                     forecastElements.Add(element);
-                    
                 }
             }
             return forecastElements.ToArray();
@@ -40,11 +38,13 @@ namespace Assets.Scripts
         public readonly DateTime time;
         public readonly float temperature;
         public readonly Condition condition;
-        public ForecastElement(DateTime time, float temperature, Condition condition)
+        public readonly Hour[] hours;
+        public ForecastElement(DateTime time, float temperature, Condition condition, Hour[] hours)
         {
             this.time = time;
             this.temperature = temperature;
             this.condition = condition;
+            this.hours = hours;
         }
     }
 }

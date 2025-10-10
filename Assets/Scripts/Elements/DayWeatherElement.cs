@@ -17,6 +17,7 @@ public class DayWeatherElement : MonoBehaviour
     [SerializeField] private LoadImageToRaw _loadImageToRaw;
 
     public event Action<DateTime> onButtonClicked = (date) => { };
+    public event Action onImageLoaded = () => { };
     private DateTime _dateTime;
     
     private void Awake()
@@ -29,32 +30,32 @@ public class DayWeatherElement : MonoBehaviour
         _dateTime = forecastElement.time;
         _buttonDateText.text = forecastElement.time.ToString("dd.MM, ddd");
         forecastElement.condition.icon = "https:"+forecastElement.condition.icon;
-        Debug.Log(forecastElement.condition.icon);
         _loadImageToRaw.Initialize(forecastElement.condition.icon);
-
-        //dayNameText formating
+        _loadImageToRaw.onImageLoaded += OnImageLoaded;
+        
         if (forecastElement.time.Day == DateTime.Now.Day)
         {
-            _dayNameText.text = "Сегодня";
+            _dayNameText.text = "РЎРµРіРѕРґРЅСЏ";
             _dayNameText.color = Color.red;
         }
         else
         {
-            //_dayNameText.text = forecastElement.time.DayOfWeek.ToString();
             _dayNameText.text = forecastElement.time.ToString("ddd");
-            //Debug.Log(forecastElement.time.DayOfWeek);
-            // "G", "g", "X", "x", "F", "f", "D" or "d"
         }
-
-        //dayNameText formating
+        
         _dateText.text = forecastElement.time.Day.ToString("d") + " " + forecastElement.time.ToString("MMMM");
-
-        //temperature formating
-        _dayTemperatureText.text = forecastElement.temperature.ToString() + "°";
+        _dayTemperatureText.text = forecastElement.temperature + "В°";
+        _nightTemperatureText.text = forecastElement.hours[3].temp_c.ToString();
     }
 
     private void OnButtonClicked()
     {
         onButtonClicked?.Invoke(_dateTime);
+    }
+    
+    public void OnImageLoaded()
+    {
+        Debug.Log("OnImageLoaded");
+        onImageLoaded?.Invoke();
     }
 }
