@@ -29,6 +29,7 @@ namespace WindowManagerSystem
         [SerializeField] private GameObject _loadingPanel;
         [SerializeField] private TextMeshProUGUI _progressText;
         [SerializeField] private Slider _progressSlider;
+        [SerializeField] private Button _exitButton;
         private int _loadedCityCount = 0;
         private int _cityCount = 0;
 
@@ -148,6 +149,11 @@ namespace WindowManagerSystem
             {
                 Destroy(_cityElementContainer.GetChild(i).gameObject);
             }
+        }
+
+        public void OnExitButtonClick()
+        {
+            Application.Quit();
         }
 
         public static int LevenshteinDistance(string s, string t)
