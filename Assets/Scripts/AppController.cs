@@ -9,12 +9,6 @@ public class AppController : MonoBehaviour
 {
     private void Start()
     {
-        //WindowManager.Instance.Open<LoadingWindow>();
-        //await Task.Delay(10);
-        //WindowManager.Instance.Close<LoadingWindow>();
         WindowManager.Instance.Open<StartMenuWindow>();
-        
-        
-        
     }
 }
